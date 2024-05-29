@@ -5,7 +5,7 @@ import SplashScreen from '@/components/SplashScreen.vue'
 
 <template>
   <div>
-    <SplashScreen></SplashScreen>
-    <!-- <BaseArcade></BaseArcade> -->
+    <!-- <SplashScreen></SplashScreen> -->
+    <BaseArcade></BaseArcade>
   </div>
 </template>

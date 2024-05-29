@@ -64,6 +64,7 @@ onMounted(() => {
     this.load.image('box', '/assets/barrel.png'); // Load box image
     this.load.image('background', '/assets/oceanbg.png'); // Load background image
     this.load.image('platform', '/assets/platform.png'); // Load platform image
+    this.load.image('helicopter', '/assets/helicopter.png'); // Load helicopter image
     this.load.audio('collision', '/assets/collision.mp3'); // Load collision sound
     this.load.audio('fall', '/assets/fall.mp3'); // Load fall sound
     this.load.audio('drop', '/assets/drop.mp3'); // Load fall sound
@@ -96,14 +97,45 @@ onMounted(() => {
     // Add event listener for pointer down
     this.input.on('pointerdown', (pointer) => {
       if (remainingMoves.value >= 1) {
-        // Play fall sound
-        dropSound.play();
         const xPosition = pointer.x;
-        const box = this.matter.add.image(xPosition, 50, 'box', null, { label: `box_${boxes.length + 1}` }); // Use the 'box' image
+
+        const helicopter = this.add.image(xPosition, -50, 'helicopter'); // Create helicopter image
+        helicopter.setScale(0.5); // Scale the helicopter
+        helicopter.setDepth(1); // Ensure the helicopter is in front of other objects
+
+        // Animate the helicopter dropping the box
+        this.tweens.add({
+          targets: helicopter,
+          y: 100,
+          duration: 1000,
+          ease: 'Power1',
+          onComplete: () => {
+            // Play fall sound
+            dropSound.play();
+            const box = this.matter.add.image(xPosition, helicopter.y + 50, 'box', null, { label: `box_${boxes.length + 1}` }); // Use the 'box' image
+            box.setScale(0.05); // Adjust scale if necessary
+            box.setBounce(0.6); // Adding some bounce
+            boxes.push(box);
+            remainingMoves.value -= 1; // Decrease remaining moves count
+
+            // Animate the helicopter moving up
+            this.tweens.add({
+              targets: helicopter,
+              y: -100,
+              duration: 1000,
+              ease: 'Power1',
+              onComplete: () => {
+                helicopter.destroy(); // Remove the helicopter after it moves up
+              }
+            });
+          }
+        });
+
+        /* const box = this.matter.add.image(xPosition, 50, 'box', null, { label: `box_${boxes.length + 1}` }); // Use the 'box' image
         box.setScale(0.05); // Adjust scale if necessary
         box.setBounce(0.6); // Adding some bounce
         boxes.push(box);
-        remainingMoves.value -= 1; // Decrease remaining moves count
+        remainingMoves.value -= 1; // Decrease remaining moves count */
       } else {
         alert(`Your score : ${score.value}`);
       }
