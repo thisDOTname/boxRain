@@ -1,15 +1,13 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <SplashScreen @startGame="startGame"></SplashScreen>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
+<script setup>
+import SplashScreen from '@/components/SplashScreen.vue'
+
+const startGame = () => {
+  console.log('TIME TO PLAY THE GAME');
 }
-</style>
+</script>
+
+<style></style>
