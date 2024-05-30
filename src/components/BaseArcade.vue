@@ -10,8 +10,21 @@
         Game over!
       </div>
     </div>
-    <div class="absolute flex top-16 left-3 z-10 text-2xl text-black bg-white p-2 rounded-md">
-      🔙
+    <div
+      class="absolute flex top-16 left-3 z-10 text-2xl font-extrabold text-black bg-white h-12 w-12 rounded-full items-center justify-center cursor-pointer"
+      @click="$emit('closeGame')">
+      X
+    </div>
+    <div
+      class="absolute flex top-16 left-16 z-10 text-2xl font-extrabold text-black bg-white h-12 w-12 rounded-full items-center justify-center cursor-pointer"
+      @click="$emit('restart')">
+      <RestartIcon class="p-2" />
+    </div>
+    <div
+      class="absolute flex top-16 left-32 z-10 text-2xl font-extrabold text-black bg-white h-12 w-12 rounded-full items-center justify-center cursor-pointer"
+      @click="state.toggleVolume()">
+      <VolumeOnIcon v-if="state.isVolumeOn" />
+      <VolumeOffIcon v-else />
     </div>
     <div class="absolute flex top-3 left-3 z-10 text-xl text-black bg-white p-2 rounded-md" v-if="isBombSelected">
       <template v-for="i in remainingBombs" :key="`remaining_bomb_${i}`">
@@ -30,7 +43,9 @@
       @click="switchMode('bomb')">
       <img src="../../public/assets/bomb.png" width="24px" />
     </div>
-    <GameOver :score="score" @again="$emit('restart')" :show="isGameOver"></GameOver>
+    <GameOver :score="score" :moves="remainingMoves" :bombs="remainingBombs" @again="$emit('restart')"
+      :show="isGameOver">
+    </GameOver>
   </div>
 </template>
 
@@ -38,7 +53,12 @@
 import { onMounted, ref, onBeforeUnmount, computed, watch } from 'vue';
 import Phaser from 'phaser';
 import GameOver from '@/components/GameOver.vue'
+import VolumeOnIcon from '@/components/icons/IconVolumeOn.vue'
+import VolumeOffIcon from '@/components/icons/IconVolumeOff.vue'
+import RestartIcon from '@/components/icons/IconRestart.vue'
+import { useStateStore } from '@/stores/state'
 
+const state = useStateStore()
 const gameContainer = ref(null);
 const score = ref(0); // Reactive score variable
 const maxBoxes = 10;
@@ -269,7 +289,7 @@ onMounted(() => {
         dropSound.play();
         const box = phaserScene.matter.add.image(xPosition, helicopter.y + 50, 'box', null, { label: `box_${boxes.length + 1}` }); // Use the 'box' image
         box.setScale(0.425); // Adjust scale if necessary
-        box.setBounce(0.75); // Adding some bounce
+        box.setBounce(1); // Adding some bounce
         boxes.push(box);
         remainingMoves.value -= 1; // Decrease remaining moves count
 

@@ -1,8 +1,41 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue';
+import { RouterView } from 'vue-router';
+import { useStateStore } from '@/stores/state'
+
+const state = useStateStore()
+const splashMusicElement = ref(null);
+const splashMusicSource = ref('../../public/assets/splash.mp3');
+
+const volumeState = computed(() => state.isVolumeOn)
+
+watch(volumeState, (value) => {
+  if (value) {
+    splashMusicElement.value.play();
+  } else {
+    splashMusicElement.value.pause();
+  }
+})
+
+onMounted(() => {
+  const playOnInteraction = () => {
+    playSplashMusic();
+    // Remove the event listener after it has been triggered
+    window.removeEventListener('click', playOnInteraction);
+    window.removeEventListener('keydown', playOnInteraction);
+  };
+
+  // Add event listeners to play the audio on user interaction
+  window.addEventListener('click', playOnInteraction);
+  window.addEventListener('keydown', playOnInteraction);
+})
+const playSplashMusic = () => {
+  splashMusicElement.value.play();
+}
 </script>
 
 <template>
+  <audio ref="splashMusicElement" :src="splashMusicSource" loop></audio>
   <RouterView />
 </template>
 

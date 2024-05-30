@@ -18,6 +18,6 @@ const restartGame = () => {
 <template>
   <div>
     <SplashScreen @startGame="startGame" v-if="!start"></SplashScreen>
-    <BaseArcade :key="`game-${gameRestartCount}`" @restart="restartGame" v-else></BaseArcade>
+    <BaseArcade :key="`game-${gameRestartCount}`" @restart="restartGame" @closeGame="start = false" v-else></BaseArcade>
   </div>
 </template>
